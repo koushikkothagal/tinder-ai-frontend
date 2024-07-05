@@ -26,6 +26,28 @@ const ProfileSelector = () => (
     </div>
 );
 
+const MatchesList = () => (
+  <div className="rounded-lg shadow-lg p-4">
+    <h2 className="text-2xl font-bold mb-4">Matches</h2>
+    <ul>
+    {[
+      { id: 1, firstName: 'Foo', lastName: 'Bar', imageUrl: 'http://127.0.0.1:8081/0efd4353-dd34-42bb-b26f-0ee85278e099.jpg'},
+      { id: 2, firstName: 'Baz', lastName: 'Qux', imageUrl: 'http://127.0.0.1:8081/2ee98151-fd09-4241-bfb2-4fa939546cb6.jpg'}
+    ].map(match => (
+      <li key={match.id} className="mb-2">
+        <button className="w-full hover:bg-gray-100 rounded flex item-center">
+          <img src={match.imageUrl} className="w-16 h-16 rounded-full mr-3 object-cover" />
+          <span>
+            <h3 className='font-bold'>{match.firstName} {match.lastName}</h3>
+          </span>
+        </button>
+      </li>
+    ))
+    }
+    </ul>
+  </div>
+)
+
 
 function App() {
   return (
@@ -35,6 +57,7 @@ function App() {
       <MessageCircle />
     </nav>
     <ProfileSelector />
+    {/* <MatchesList /> */}
   </div>
   )
 }
