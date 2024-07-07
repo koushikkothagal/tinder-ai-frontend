@@ -25,6 +25,15 @@ const saveSwipe = async (profileId) => {
   
 
 
+const fetchMatches = async () => {
+  const response = await fetch('http://localhost:8080/matches');
+  if (!response.ok) {
+    throw new Error('Failed to fetch matches');
+  }
+  return response.json();
+}
+
+
 const ProfileSelector = ({ profile, onSwipe }) => (
   profile ? (
   <div className="rounded-lg overflow-hidden bg-white shadow-lg">
@@ -51,22 +60,19 @@ const ProfileSelector = ({ profile, onSwipe }) => (
   ) : (<div>Loading...</div>)
 );
 
-const MatchesList = ({ onSelectMatch }) => (
+const MatchesList = ({ matches, onSelectMatch }) => (
   <div className="rounded-lg shadow-lg p-4">
     <h2 className="text-2xl font-bold mb-4">Matches</h2>
     <ul>
-      {[
-        { id: 1, firstName: 'Foo', lastName: 'Bar', imageUrl: 'http://127.0.0.1:8081/0efd4353-dd34-42bb-b26f-0ee85278e099.jpg' },
-        { id: 2, firstName: 'Baz', lastName: 'Qux', imageUrl: 'http://127.0.0.1:8081/2ee98151-fd09-4241-bfb2-4fa939546cb6.jpg' }
-      ].map(match => (
-        <li key={match.id} className="mb-2">
+      {matches.map(match => (
+        <li key={match.profile.id} className="mb-2">
           <button 
               className="w-full hover:bg-gray-100 rounded flex item-center"
               onClick={onSelectMatch}
               >
-            <img src={match.imageUrl} className="w-16 h-16 rounded-full mr-3 object-cover" />
+            <img src={'http://127.0.0.1:8081/' + match.profile.imageUrl} className="w-16 h-16 rounded-full mr-3 object-cover" />
             <span>
-              <h3 className='font-bold'>{match.firstName} {match.lastName}</h3>
+              <h3 className='font-bold'>{match.profile.firstName} {match.profile.lastName}</h3>
             </span>
           </button>
         </li>
@@ -135,19 +141,31 @@ function App() {
     }
   }
 
+  const loadMatches = async () => {
+    try {
+      const matches = await fetchMatches();
+      setMatches(matches);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 
   useEffect(() => {
     loadRandomProfile();
+    loadMatches();
   }, {});
 
   const [currentScreen, setCurrentScreen] = useState('profile');
   const [currentProfile, setCurrentProfile] = useState(null);
+  const [matches, setMatches] = useState([]);
 
-  const onSwipe = (profileId, direction) => {
-    if (direction === 'right') {
-      saveSwipe(profileId)
-    }
+  const onSwipe = async (profileId, direction) => {
     loadRandomProfile();
+    if (direction === 'right') {
+      await saveSwipe(profileId)
+      await loadMatches();
+    }
   }
 
   const renderScreen = () => {
@@ -155,7 +173,7 @@ function App() {
       case 'profile':
         return <ProfileSelector profile={currentProfile} onSwipe={onSwipe} />;
       case 'matches':
-        return <MatchesList onSelectMatch={() => setCurrentScreen('chat')} />;
+        return <MatchesList matches={matches} onSelectMatch={() => setCurrentScreen('chat')} />;
       case 'chat':
         return <ChatScreen />;
     }
