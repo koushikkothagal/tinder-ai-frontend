@@ -59,7 +59,7 @@ const ProfileSelector = ({ profile, onSwipe }) => (
   profile ? (
   <div className="rounded-lg overflow-hidden bg-white shadow-lg">
     <div className="relative">
-      <img src={'http://127.0.0.1:8081/' + profile.imageUrl} />
+      <img src={'http://localhost:8080/images/' + profile.imageUrl} />
       <div className="absolute bottom-0 left-0 right-0 text-white p-4 bg-gradient-to-t from-black">
         <h2 className='text-3xl font-bold'>{profile.firstName} {profile.lastName}, {profile.age}</h2>
       </div>
@@ -92,7 +92,7 @@ const MatchesList = ({ matches, onSelectMatch }) => {
               className="w-full hover:bg-gray-100 rounded flex item-center"
               onClick={() => onSelectMatch(match.profile, match.conversationId)}
               >
-            <img src={'http://127.0.0.1:8081/' + match.profile.imageUrl} className="w-16 h-16 rounded-full mr-3 object-cover" />
+            <img src={'http://localhost:8080/images/' + match.profile.imageUrl} className="w-16 h-16 rounded-full mr-3 object-cover" />
             <span>
               <h3 className='font-bold'>{match.profile.firstName} {match.profile.lastName}</h3>
             </span>
@@ -132,7 +132,7 @@ const ChatScreen = ({currentMatch, conversation, refreshState}) => {
             <div className={`flex items-end ${message.authorId === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
               {message.authorId === 'user' ? (<User size={15} />) : 
               (<img
-                src={`http://127.0.0.1:8081/${currentMatch.imageUrl}`}
+                src={`http://localhost:8080/images/${currentMatch.imageUrl}`}
                 className="w-11 h-11 rounded-full"
               />)}
               <div
